@@ -28,6 +28,8 @@ class LocalTime.Controller
   processElement: (element) ->
     datetime = element.getAttribute("datetime")
     local = element.getAttribute("data-local")
+    onPrefix = element.getAttribute("data-on-prefix") != "false"
+    dateOnly = element.getAttribute("data-date-only") == "true"
     format = if config.useFormat24
       element.getAttribute("data-format24") || element.getAttribute("data-format")
     else
@@ -42,27 +44,25 @@ class LocalTime.Controller
       element.setAttribute("title", title)
 
     markAsProcessed(element)
+    relativeTime = new LocalTime.RelativeTime(time, dateOnly, onPrefix)
     element.textContent = switch local
       when "time"
         markAsLocalized(element)
         strftime(time, format)
       when "date"
         markAsLocalized(element)
-        relative(time).toDateString()
+        relativeTime.toDateString()
       when "time-ago"
-        relative(time).toString()
+        relativeTime.toString()
       when "time-or-date"
-        relative(time).toTimeOrDateString()
+        relativeTime.toTimeOrDateString()
       when "weekday"
-        relative(time).toWeekdayString()
+        relativeTime.toWeekdayString()
       when "weekday-or-date"
-        relative(time).toWeekdayString() or relative(time).toDateString()
+        relativeTime.toWeekdayString() or relativeTime.toDateString()
 
   markAsLocalized = (element) ->
     element.setAttribute("data-localized", "")
 
   markAsProcessed = (element) ->
     element.setAttribute("data-processed-at", new Date().toISOString())
-
-  relative = (time) ->
-    new LocalTime.RelativeTime time

@@ -1,58 +1,69 @@
 module LocalTimeHelper
-  def local_time(time, options = nil)
+  def local_time(time, **options)
     time = utc_time(time)
 
-    options, format12 = extract_options_and_value(options, :format)
+    format12 = options[:format]
     format12, format24 = find_12h_and_24h_formats(format12)
 
     options[:data] ||= {}
     options[:data].merge! local: :time, format: format12, format24: format24
 
-    time_tag time, time.strftime(format12), options
+    time_tag \
+      time,
+      time.strftime(format12),
+      options
   end
 
-  def local_date(time, options = nil)
-    options, format = extract_options_and_value(options, :format)
+  def local_date(time, **options)
+    format = options[:format]
     format, _ = find_12h_and_24h_formats(format, prefer: :date)
-    local_time time, options.merge(format: format)
+
+    local_time \
+      time,
+      **options.merge(format: format)
   end
 
-  def local_relative_time(time, options = nil)
+  def local_relative_time(time, **options)
     time = utc_time(time)
-    options, type = extract_options_and_value(options, :type)
+
+    unless type = options.delete(:type)
+      raise "type param is required"
+    end
+
+    data = {
+      local:     type,
+      on_prefix: options.delete(:on_prefix),
+      date_only: options.delete(:date_only)
+    }.compact
 
     options[:data] ||= {}
-    options[:data].merge! local: type
+    options[:data].merge! data
 
-    time_tag time, time.strftime(LocalTime.default_time_format), options
+    time_tag \
+      time,
+      time.strftime(LocalTime.default_time_format),
+      options
   end
 
-  def local_time_ago(time, options = nil)
-    options, * = extract_options_and_value(options, :type)
+  def local_time_ago(time_or_date, **options)
     options[:type] = "time-ago"
-    local_relative_time time, options
+
+    if time_or_date.is_a?(Date) && !options.key?(:date_only)
+      options[:date_only] = true
+    end
+
+    local_relative_time \
+      time_or_date,
+      **options
   end
 
   def utc_time(time_or_date)
-    if time_or_date.respond_to?(:in_time_zone)
-      time_or_date.in_time_zone.utc
-    else
-      time_or_date.to_time.utc
-    end
+    time_or_date
+      .then { _1.try(:in_time_zone) || _1.to_time }
+      .utc
   end
 
   private
-    def extract_options_and_value(options, value_key = nil)
-      case options
-      when Hash
-        value = options.delete(value_key)
-        [ options, value ]
-      when NilClass
-        [ {} ]
-      else
-        [ {}, options ]
-      end
-    end
 
     def find_12h_and_24h_formats(format12, prefer: :time)
       if format12.is_a?(Symbol)

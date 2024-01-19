@@ -73,6 +73,7 @@ LocalTime.config.i18n =
         default_24h: "%H:%M"
     datetime:
       at: "{date} at {time}"
+      on_at: "on {date} at {time}"
       formats:
         default: "%B %e, %Y at %l:%M%P %Z"
         default_24h: "%B %e, %Y at %H:%M %Z"

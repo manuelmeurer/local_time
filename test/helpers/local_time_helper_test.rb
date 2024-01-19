@@ -62,10 +62,10 @@ class LocalTimeHelperTest < Minitest::Test
     assert_dom_equal expected, local_time(@time, format: "%b %e")
   end
 
-  def test_local_time_with_format_as_string
-    expected = %Q(<time data-format="%b %e" data-local="time" datetime="#{@time_js}">Nov 21</time>)
-    assert_dom_equal expected, local_time(@time, "%b %e")
-  end
+  # def test_local_time_with_format_as_string
+  #   expected = %Q(<time data-format="%b %e" data-local="time" datetime="#{@time_js}">Nov 21</time>)
+  #   assert_dom_equal expected, local_time(@time, "%b %e")
+  # end
 
   def test_local_time_with_i18n_format
     expected = %Q(<time data-format="%-l:%M%P" data-format24="%H:%M" data-local="time" datetime="#{@time_js}">6:00am</time>)
@@ -134,10 +134,10 @@ class LocalTimeHelperTest < Minitest::Test
     assert_dom_equal expected, local_date(@time.to_date, format: "%b %e")
   end
 
-  def test_local_date_with_format_as_string
-    expected = %Q(<time data-format="%b %e" data-local="time" datetime="#{@time_js}">Nov 21</time>)
-    assert_dom_equal expected, local_date(@time.to_date, "%b %e")
-  end
+  # def test_local_date_with_format_as_string
+  #   expected = %Q(<time data-format="%b %e" data-local="time" datetime="#{@time_js}">Nov 21</time>)
+  #   assert_dom_equal expected, local_date(@time.to_date, "%b %e")
+  # end
 
   def test_local_date_with_i18n_format
     expected = %Q(<time data-format="%b %e" data-local="time" datetime="#{@time_js}">Nov 21</time>)
@@ -169,8 +169,8 @@ class LocalTimeHelperTest < Minitest::Test
     assert_dom_equal expected, local_relative_time(@time, type: "time-or-date")
   end
 
-  def test_local_time_ago_with_type_as_string
-    expected = %Q(<time data-local="time-or-date" datetime="#{@time_js}">November 21, 2013  6:00am</time>)
-    assert_dom_equal expected, local_relative_time(@time, "time-or-date")
-  end
+  # def test_local_time_ago_with_type_as_string
+  #   expected = %Q(<time data-local="time-or-date" datetime="#{@time_js}">November 21, 2013  6:00am</time>)
+  #   assert_dom_equal expected, local_relative_time(@time, "time-or-date")
+  # end
 end
